@@ -1,6 +1,6 @@
 // @vue/component
 export default {
-    name: '404View',
+    name: 'ResourceNotFound',
 
     components: {},
 

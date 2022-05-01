@@ -19,7 +19,7 @@ const routers = [
     {
         //应置于数组最低端
         path: "*",
-        name: "404",
+        name: "资源不存在",
         component: () => import("@/views/error/404/404View")
     }
 ]

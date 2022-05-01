@@ -26,6 +26,20 @@ import "echarts/lib/component/legend"
 import "echarts/lib/component/title"
 //Vuex
 import store from "./store/index"
+/**
+ * font-awesome 引入libraries存储库
+ * https://blog.csdn.net/zyj362633491/article/details/86422353
+ */
+import { library } from '@fortawesome/fontawesome-svg-core'
+//引入所有免费fas图标和部分商标
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { faQq, faWeibo, faWeixin } from '@fortawesome/free-brands-svg-icons'
+//引入vueFontAwesome
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+//添加所有fas图标到所需库中
+library.add(fas, faQq, faWeibo, faWeixin)
+//组件注册
+Vue.component("font-awesome-icon", FontAwesomeIcon)
 
 /**
  * 进度条渲染逻辑
@@ -35,15 +49,18 @@ import store from "./store/index"
  */
 router.beforeEach((to, from, next) => {
   NProgress.start()
+  document.title = to.name
 
-  if (to.path == "/login") {
-    //防止进入"/login"无限循环
-    next();
-  } else if (store.state.userId == null) {
-    next({path: "/login"});
-  } else {
-    next();
-  }
+  //TODO 为了方便做页面于是注解掉了下面的重定向，记得改回去
+
+  // if (to.path == "/login") {
+  //   //防止进入"/login"无限循环
+  //   next();
+  // } else if (store.state.userId == null) {
+  //   next({path: "/login"});
+  // } else {
+  //   next();
+  // }
   next();
 })
 router.afterEach(() => {
