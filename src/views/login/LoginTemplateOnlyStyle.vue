@@ -1,55 +1,65 @@
 <template>
+
+<!--
+
+
+    这是个模板页，准备拿来复用的（主要是怕样式逻辑又写崩
+
+
+
+ -->
   <div class="container">
     <div class="forms-container">
       <!--        登录表单-->
       <div class="sign-signup">
-        <form action="" method="post" id="sign-in-form" class="sign-in-form">
-          <h2 class="title">用户登录</h2>
+        <el-form :model="dynamicValidateForm" class="sign-in-form" ref="dynamicValidateForm" >
+          <h2 class="title">用户登录233</h2>
 <!--          用户名-->
           <div class="input-field">
+<!--            viewBox="0 -50 100 200"-->
             <font-awesome-icon  class="front-fa" :icon="['fas', 'fa-user']"/>
-            <input type="email" @keyup="valid" id="sign_username" v-model="sign.username" name="username" placeholder="用户邮箱"/>
+            <input type="text" name="username" placeholder="用户邮箱"/>
           </div>
 <!--          密码-->
           <div class="input-field">
             <font-awesome-icon class="front-fa" :icon="['fas', 'fa-lock']"/>
-            <input type="password" @keyup="valid" id="sign_password" v-model="sign.password" name="password" placeholder="密码"/>
+            <input type="password" name="password" placeholder="密码"/>
           </div>
-          <input type="button" @click="doLogin()" value="登录" class="btn sign"/>
+          <input type="submit" value="登录" class="btn sign"/>
 <!--          其他登录方式-->
           <p class="social-text">选择其他登录方式</p>
           <div class="social-media">
-            <div to="" @click="notSupportYet()"  class="social-icon">
+            <router-link to="" class="social-icon">
               <font-awesome-icon icon="fa-brands fa-qq" />
-            </div>
-            <div @click="notSupportYet()" class="social-icon">
+            </router-link>
+            <router-link to="" class="social-icon">
               <font-awesome-icon icon="fa-brands fa-weibo"/>
-            </div>
-            <div to="" @click="notSupportYet()" class="social-icon">
+            </router-link>
+            <router-link to="" class="social-icon">
               <font-awesome-icon icon="fa-brands fa-weixin"/>
-            </div>
+            </router-link>
           </div>
-        </form>
+        </el-form>
 
         <!--        注册表单-->
-        <form action="" method="post" id="sign-up-form" class="sign-up-form">
+        <form action="" method="post" class="sign-up-form">
           <h2 class="title">用户注册</h2>
           <!--          用户名-->
           <div class="input-field">
             <font-awesome-icon  class="front-fa" :icon="['fas', 'fa-user']"/>
-            <input type="text" @keyup="valid" id="sign_up_nickname" v-model="sign_up.nickname" name="nickname" placeholder="用户昵称"/>
+            <input type="text" name="username" placeholder="用户昵称"/>
           </div>
           <!--          邮箱-->
           <div class="input-field">
             <font-awesome-icon  class="front-fa" :icon="['fas', 'fa-envelope']"/>
-            <input type="email" @keyup="valid" id="sign_up_username" v-model="sign_up.username" name="username" placeholder="用户邮箱"/>
+            <input type="email" name="email" placeholder="用户邮箱"/>
           </div>
           <!--          密码-->
           <div class="input-field">
             <font-awesome-icon class="front-fa" :icon="['fas', 'fa-lock']"/>
-            <input type="password" @keyup="valid" id="sign_up_password" v-model="sign_up.password" name="password" placeholder="密码"/>
+            <input type="password" name="password" placeholder="密码"/>
           </div>
-          <input type="button" @click="doRegist()" value="注册" class="btn signup"/>
+          <input type="submit" value="注册" class="btn signup"/>
         </form>
       </div>
 
@@ -82,160 +92,21 @@
   </div>
 </template>
 
-<!--腾讯前端验证码-->
-
 <script>
-
 export default {
   name: "LoginView",
-  watch: {
-
-  },
   data() {
     return {
-      sign: {
-        username: "",
-        password: ""
-      },
-      sign_up: {
-        nickname: "",
-        username: "",
-        password: ""
+      dynamicValidateForm: {
+        domains: [{
+          value: ''
+        }],
+        email: ''
       }
-    }
+    };
   },
   methods: {
-    notSupportYet() {
-      this.$message({
-        type: 'warning',
-        message: '目前暂不支持'
-      })
-    },
-    doLogin() {
-      //验证表单
-      if (this.signin()) {
-        //腾讯防水墙
-        //eslint强行忽略注释
-        // eslint-disable-next-line no-undef
-        let captcha = new TencentCaptcha(
-            //参数一 AppId
-            this.config.TENCENT_CAPTCHA_APP_ID,
-            //第二参数 回调函数  https://cloud.tencent.com/document/product/1110/36841
-            (res) => {
-              //ret 0
-              if (res.ret === 0) {
 
-                //向后端发送登录请求，然而Spring security的登录请求必须是post form类型，不能直接传一个对象
-                let userDetails = new URLSearchParams();
-                userDetails.append("username", this.sign.username);
-                userDetails.append("password", this.sign.password);
-
-                this.postRequest("/login", userDetails).then(res=>{
-                  //TODO 登录成功处理
-                  console.log(res)
-                })
-              }
-            }
-        )
-
-        //显示验证码
-        captcha.show();
-
-
-      }
-    },
-    doRegist() {
-      this.$message({
-        type: 'error',
-        message: 'Admin系统不支持注册新用户'
-      })
-    },
-    signin() {
-      //验证表单
-      let flag = true;
-      for(let val in this.sign) {
-        flag = this.validateFatherElement(document.getElementById("sign_" + val))
-      }
-      if (flag === false) {
-        this.$message({
-          message: '不大对劲，有什么写错了吧',
-          type: 'warning'
-        });
-        return flag;
-      }
-      return true;
-    },
-    signup() {
-      //验证表单
-      let flag = true;
-      for(let val in this.sign_up) {
-        flag = this.validFormElement(document.getElementById("sign_up_" + val))
-      }
-      if (flag === false) {
-        this.$message({
-          message: '不大对劲，有什么写错了吧',
-          type: 'warning'
-        });
-        return flag;
-      }
-      return true;
-    },
-    valid(event) {
-      return this.validateFatherElement(event.currentTarget, event.currentTarget.getAttribute("type"))
-    },
-    validFormElement(element) {
-      return this.validateFatherElement(element, element.getAttribute("type"))
-    },
-    validateEmail(str){
-      if (str == null) {
-        return false;
-      } else {
-        let pattern = /^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/;
-        return pattern.test(str);
-      }
-    },
-    validateFatherElement(element, text="text") {
-      if (element == null) {
-        return false
-      }
-      const father = element.parentElement
-      switch (text) {
-        case "text":
-          if (element.value != null && element.value != "" && father.classList.length > 0) {
-            if (father.classList.contains("bad_valid")) {
-              father.classList.remove("bad_valid");
-            }
-            return true;
-          }
-          break;
-        case "email":
-          if (element.value != null && element.value != "" && father.classList.length > 0) {
-            if (this.validateEmail(element.value)) {
-              if (father.classList.contains("bad_valid")) {
-                  father.classList.remove("bad_valid");
-              }
-              return true;
-            } else {
-              //验证不通过
-              father.classList.add("bad_valid");
-              return false;
-            }
-
-
-          }
-          break;
-        case "password":
-          if (element.value != null && element.value != "" && father.classList.length > 0 ) {
-            if (father.classList.contains("bad_valid")) {
-              father.classList.remove("bad_valid");
-            }
-            return true;
-          }
-          break;
-      }
-      father.classList.add("bad_valid")
-      return false;
-    }
   },
   mounted() {
     /**
@@ -254,6 +125,7 @@ export default {
       container.classList.remove("sign-up-mode")
     })
 
+    document.getElementsByClassName()
   }
 
 }
@@ -380,12 +252,7 @@ export default {
             display: grid;
             grid-template-columns: 15% 85%;
             padding: 0 .4rem;
-            transition: .9s .3s ease-in-out;
 
-            &.bad_valid {
-              background-color: rgba(204, 44, 44, 0.77);
-              border: solid 3px coral;
-            }
             .front-fa {
               align-self: center;
               width: 100%;
@@ -442,11 +309,6 @@ export default {
               border-color: #4481eb;
               background-color: #fff;
               color: #4481eb;
-
-              /**
-                鼠标样式：暂不支持
-               */
-              cursor: not-allowed;
             }
           }
 

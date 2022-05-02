@@ -11,6 +11,11 @@ const routers = [
       component: () => import("@/App")
     },
     {
+      path: '/test1',
+        name: '测试页面',
+        component: () => import("@/views/test/TestProxy")
+    },
+    {
         path: "/login",
         name: "登录",
         hidden: true,

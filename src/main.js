@@ -6,6 +6,8 @@ import "element-ui/lib/theme-chalk/index.css"
 //axios & plugin
 import Axios from "axios"
 import VueAxios from "vue-axios";
+//custom axios utils
+import { getRequest, postRequest, putRequest, deleteRequest} from "@/utils/api";
 //Vue router
 import router from "./router"
 //加载进度条 js & css
@@ -38,8 +40,9 @@ import { faQq, faWeibo, faWeixin } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 //添加所有fas图标到所需库中
 library.add(fas, faQq, faWeibo, faWeixin)
-//组件注册
-Vue.component("font-awesome-icon", FontAwesomeIcon)
+//静态配置
+import config from "@/assets/js/config"
+
 
 /**
  * 进度条渲染逻辑
@@ -103,7 +106,41 @@ Axios.interceptors.response.use(function (response) {
   console.log(error)
   return Promise.reject(error);
 });
+
 Vue.config.productionTip = false
+
+// 组件内引用外部script
+Vue.component('remote-script', {
+  render: function (createElement) {
+    var self = this;
+    return createElement('script', {
+      attrs: {
+        type: 'text/javascript',
+        src: this.src
+      },
+      on: {
+        load: function (event) {
+          self.$emit('load', event);
+        },
+        error: function (event) {
+          self.$emit('error', event);
+        },
+        readystatechange: function (event) {
+          if (this.readyState == 'complete') {
+            self.$emit('load', event);
+          }
+        }
+      }
+    });
+  },
+  props: {
+    src: {
+      type: String,
+      required: true
+    }
+  }
+});
+
 
 //安装组件
 Vue.use(ElementUI)
@@ -111,6 +148,15 @@ Vue.use(VueAxios, Axios)
 Vue.use(VueCalenderHeatmap)
 //给VueEcharts组件改个名
 Vue.component("v-chart", VueEcharts)
+//弄几个全局函数
+Vue.prototype.getRequest = getRequest;
+Vue.prototype.postRequest = postRequest;
+Vue.prototype.deleteRequest = deleteRequest;
+Vue.prototype.putRequest = putRequest;
+//组件注册
+Vue.component("font-awesome-icon", FontAwesomeIcon)
+//自定义配置
+Vue.prototype.config = config
 
 new Vue({
   //this.$router

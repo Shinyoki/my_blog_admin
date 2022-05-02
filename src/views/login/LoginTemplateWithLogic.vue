@@ -1,4 +1,12 @@
 <template>
+  <!--
+
+
+    这是个模板页，准备拿来复用的（主要是怕新写的样式逻辑又崩掉
+
+
+
+ -->
   <div class="container">
     <div class="forms-container">
       <!--        登录表单-->
@@ -15,19 +23,19 @@
             <font-awesome-icon class="front-fa" :icon="['fas', 'fa-lock']"/>
             <input type="password" @keyup="valid" id="sign_password" v-model="sign.password" name="password" placeholder="密码"/>
           </div>
-          <input type="button" @click="doLogin()" value="登录" class="btn sign"/>
+          <input type="button" @click="signin()" value="登录" class="btn sign"/>
 <!--          其他登录方式-->
           <p class="social-text">选择其他登录方式</p>
           <div class="social-media">
-            <div to="" @click="notSupportYet()"  class="social-icon">
+            <router-link to="" class="social-icon">
               <font-awesome-icon icon="fa-brands fa-qq" />
-            </div>
-            <div @click="notSupportYet()" class="social-icon">
+            </router-link>
+            <router-link to="" class="social-icon">
               <font-awesome-icon icon="fa-brands fa-weibo"/>
-            </div>
-            <div to="" @click="notSupportYet()" class="social-icon">
+            </router-link>
+            <router-link to="" class="social-icon">
               <font-awesome-icon icon="fa-brands fa-weixin"/>
-            </div>
+            </router-link>
           </div>
         </form>
 
@@ -49,7 +57,7 @@
             <font-awesome-icon class="front-fa" :icon="['fas', 'fa-lock']"/>
             <input type="password" @keyup="valid" id="sign_up_password" v-model="sign_up.password" name="password" placeholder="密码"/>
           </div>
-          <input type="button" @click="doRegist()" value="注册" class="btn signup"/>
+          <input type="button" @click="signup()" value="注册" class="btn signup"/>
         </form>
       </div>
 
@@ -82,10 +90,7 @@
   </div>
 </template>
 
-<!--腾讯前端验证码-->
-
 <script>
-
 export default {
   name: "LoginView",
   watch: {
@@ -105,51 +110,6 @@ export default {
     }
   },
   methods: {
-    notSupportYet() {
-      this.$message({
-        type: 'warning',
-        message: '目前暂不支持'
-      })
-    },
-    doLogin() {
-      //验证表单
-      if (this.signin()) {
-        //腾讯防水墙
-        //eslint强行忽略注释
-        // eslint-disable-next-line no-undef
-        let captcha = new TencentCaptcha(
-            //参数一 AppId
-            this.config.TENCENT_CAPTCHA_APP_ID,
-            //第二参数 回调函数  https://cloud.tencent.com/document/product/1110/36841
-            (res) => {
-              //ret 0
-              if (res.ret === 0) {
-
-                //向后端发送登录请求，然而Spring security的登录请求必须是post form类型，不能直接传一个对象
-                let userDetails = new URLSearchParams();
-                userDetails.append("username", this.sign.username);
-                userDetails.append("password", this.sign.password);
-
-                this.postRequest("/login", userDetails).then(res=>{
-                  //TODO 登录成功处理
-                  console.log(res)
-                })
-              }
-            }
-        )
-
-        //显示验证码
-        captcha.show();
-
-
-      }
-    },
-    doRegist() {
-      this.$message({
-        type: 'error',
-        message: 'Admin系统不支持注册新用户'
-      })
-    },
     signin() {
       //验证表单
       let flag = true;
@@ -442,11 +402,6 @@ export default {
               border-color: #4481eb;
               background-color: #fff;
               color: #4481eb;
-
-              /**
-                鼠标样式：暂不支持
-               */
-              cursor: not-allowed;
             }
           }
 
