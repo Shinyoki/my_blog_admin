@@ -131,7 +131,12 @@ export default {
                 userDetails.append("password", this.sign.password);
 
                 this.postRequest("/login", userDetails).then(res=>{
-                  //TODO 登录成功处理
+
+                  //res.data ==> userDetails
+                  //存储用户信息
+                  this.$store.commit("login", res.data);
+                  //TODO 请求可访菜单
+
                   console.log(res)
                 })
               }

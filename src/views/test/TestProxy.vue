@@ -13,6 +13,7 @@
 </template>
 
 <script>
+
 export default {
   name: "TestProxy",
   data() {
@@ -20,7 +21,9 @@ export default {
       value: '',
       list: [
         {value: 'doRequest', label: 'ping请求'},
-        {value: 'doLogin', label: '登录'}
+        {value: 'doLogin', label: '登录'},
+        {value: 'redirect404', label: 'push到404'},
+        {value: 'testMessageHtml', label: '测试html格式的message'}
       ],
       user: {
         username: 'admin@qq.com',
@@ -31,6 +34,15 @@ export default {
   methods: {
     execute() {
       this[this.value]()
+    },
+    testMessageHtml() {
+      this.$message({
+        dangerouslyUseHTMLString: true,
+        message: `<strong style="color: red">触发错误：</strong><br></br><div>${this.user.toJSON()}</div>`
+      })
+    },
+    redirect404() {
+      this.$router.push({name:"资源不存在"})
     },
     doRequest: function () {
       this.getRequest("/test/ping")

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 //element js & css
-import ElementUI from "element-ui"
+import ElementUI, {Message} from "element-ui"
 import "element-ui/lib/theme-chalk/index.css"
 //axios & plugin
 import Axios from "axios"
@@ -96,14 +96,36 @@ Axios.interceptors.request.use(
       return Promise.reject(error);
     }
 )
+
+function errorRedirect(code) {
+  if (code == 401) {
+    router.push({name: '登录'})
+  }else if (code == 404) {
+    router.push({name: '资源不存在'})
+  }
+}
 Axios.interceptors.response.use(function (response) {
-  changeNPColor("green")
+  //后端将所有的rest请求都转为json字符串，基本上得到的都是200响应码，因此要拦截处理自定义的响应码
+  if (response.data.flag) {
+    //true 成功 原样返回response
+  } else {
+    //false 失败
+    errorRedirect(response.data.code)
+    Message({
+      dangerouslyUseHTMLString: true,
+      message: `<strong style="color: red">触发错误：</strong><br></br><div>${response.data.message}</div>`
+    })
+
+  }
+  changeNPColor("green");
   NProgress.done()
+
   return response;
 }, function (error) {
+  errorRedirect(error.status)
   changeNPColor("red")
   NProgress.done()
-  console.log(error)
+  Message.error("触发" + error.status + "错误")
   return Promise.reject(error);
 });
 

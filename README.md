@@ -1,24 +1,17 @@
 # my_blog_admin
+这是 Shinyoki/my_blog 的前端管理项目
 
-## Project setup
+## 安装依赖
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 热部署运行开发环境的项目
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 编译为生产环境的项目
 ```
 npm run build
 ```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
