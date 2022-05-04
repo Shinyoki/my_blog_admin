@@ -82,9 +82,10 @@
   </div>
 </template>
 
-<!--腾讯前端验证码-->
 
 <script>
+import {initMenus} from "@/utils/menu";
+
 
 export default {
   name: "LoginView",
@@ -131,22 +132,23 @@ export default {
                 userDetails.append("password", this.sign.password);
 
                 this.postRequest("/login", userDetails).then(res=>{
-
-                  //res.data ==> userDetails
-                  //存储用户信息
-                  this.$store.commit("login", res.data);
-                  //TODO 请求可访菜单
-
-                  console.log(res)
+                  if (res.data.flag) {
+                    console.log("开始处理用户数据...")
+                    //res.data ==> userDetails
+                    //存储用户信息
+                    this.$store.commit("login", res.data.data);
+                    //初始化vuex userMenuList 和 router
+                    initMenus();
+                    this.$message.success("登陆成功")
+                    //跳转
+                    this.$router.push({path: '/'})
+                  }
                 })
               }
             }
         )
-
         //显示验证码
         captcha.show();
-
-
       }
     },
     doRegist() {

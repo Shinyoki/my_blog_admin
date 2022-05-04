@@ -9,21 +9,28 @@
           :value="item.value">
       </el-option>
     </el-select>
+    <div v-if="show">
+
+    </div>
   </div>
 </template>
 
 <script>
+import {initMenus} from "@/utils/menu";
 
 export default {
   name: "TestProxy",
   data() {
     return {
+      show: true,
       value: '',
       list: [
         {value: 'doRequest', label: 'ping请求'},
         {value: 'doLogin', label: '登录'},
         {value: 'redirect404', label: 'push到404'},
-        {value: 'testMessageHtml', label: '测试html格式的message'}
+        {value: 'testMessageHtml', label: '测试html格式的message'},
+        {value: 'testInitMenu', label: '测试初始菜单函数'},
+        {value: 'push1', label: '测试路由'}
       ],
       user: {
         username: 'admin@qq.com',
@@ -34,6 +41,9 @@ export default {
   methods: {
     execute() {
       this[this.value]()
+    },
+    push1() {
+      console.table(this.$router.getRoutes())
     },
     testMessageHtml() {
       this.$message({
@@ -63,6 +73,15 @@ export default {
     },
     success(message) {
       this.$message.success(message)
+    },
+    testInitMenu() {
+      if (this.$store.state.userId == null) {
+        this.$message.error("先登录");
+        this.$router.push("/login");
+        return;
+      } else {
+        initMenus()
+      }
     }
   }
 }

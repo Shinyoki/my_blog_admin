@@ -6,12 +6,12 @@ Vue.use(VueRouter)
 //路由列表
 const routers = [
     {
-      path: "/",
-      name: "首页",
-      component: () => import("@/App")
+        path: '/test2',
+        name: 'iconfont',
+        component: () => import("@/views/test/iconFontVIew")
     },
     {
-      path: '/test1',
+        path: '/test1',
         name: '测试页面',
         component: () => import("@/views/test/TestProxy")
     },
@@ -20,13 +20,8 @@ const routers = [
         name: "登录",
         hidden: true,
         component: () => import("../views/login/LoginView.vue")
-    },
-    {
-        //应置于数组最低端
-        path: "*",
-        name: "资源不存在",
-        component: () => import("@/views/error/404/404View")
     }
+
 ]
 
 

@@ -29,6 +29,5 @@ module.exports = defineConfig({
         '@': resolve('src')
       }
     }
-  },
-
+  }
 })

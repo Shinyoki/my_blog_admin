@@ -19,9 +19,9 @@ export default new Vuex.Store({
         avatar: null,
         nickname: null,
         intro: null,
-        webSite: null
+        webSite: null,
     },
-    //同步 dispatch
+    //同步 commit
     mutations: {
         /**
          * 用户登录，发送/api/login请求后返回UserDetails
@@ -62,7 +62,7 @@ export default new Vuex.Store({
             state.userMenuList = menuList
         }
     },
-    //异步 commit
+    //异步 dispatch
     actions: {
 
     },

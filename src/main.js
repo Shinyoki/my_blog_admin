@@ -7,7 +7,7 @@ import "element-ui/lib/theme-chalk/index.css"
 import Axios from "axios"
 import VueAxios from "vue-axios";
 //custom axios utils
-import { getRequest, postRequest, putRequest, deleteRequest} from "@/utils/api";
+import { getRequest, postRequest, putRequest, deleteRequest} from "@/utils/axios-apis";
 //Vue router
 import router from "./router"
 //加载进度条 js & css
@@ -40,6 +40,9 @@ import { faQq, faWeibo, faWeixin } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 //添加所有fas图标到所需库中
 library.add(fas, faQq, faWeibo, faWeixin)
+//引入阿里巴巴的iconfont：项目自定义了前缀是el-icon-，定义字体名称为iconfont
+import "@/assets/css/iconfont/iconfont.css"
+import "@/assets/css/iconfont/iconfont"
 //静态配置
 import config from "@/assets/js/config"
 
@@ -54,17 +57,14 @@ router.beforeEach((to, from, next) => {
   NProgress.start()
   document.title = to.name
 
-  //TODO 为了方便做页面于是注解掉了下面的重定向，记得改回去
-
-  // if (to.path == "/login") {
-  //   //防止进入"/login"无限循环
-  //   next();
-  // } else if (store.state.userId == null) {
-  //   next({path: "/login"});
-  // } else {
-  //   next();
-  // }
-  next();
+  if (to.path == "/login") {
+    //防止进入"/login"无限循环
+    next();
+  } else if (store.state.userId == null) {
+    next({path: "/login"});
+  } else {
+    next();
+  }
 })
 router.afterEach(() => {
   changeNPColor("green")
@@ -98,9 +98,9 @@ Axios.interceptors.request.use(
 )
 
 function errorRedirect(code) {
-  if (code == 401) {
+  if (code === 401) {
     router.push({name: '登录'})
-  }else if (code == 404) {
+  }else if (code === 404) {
     router.push({name: '资源不存在'})
   }
 }
@@ -113,7 +113,7 @@ Axios.interceptors.response.use(function (response) {
     errorRedirect(response.data.code)
     Message({
       dangerouslyUseHTMLString: true,
-      message: `<strong style="color: red">触发错误：</strong><br></br><div>${response.data.message}</div>`
+      message: `<strong style="color: red">触发错误：</strong><br/><div>${response.data.message}</div>`
     })
 
   }

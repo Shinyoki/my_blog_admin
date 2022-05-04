@@ -1,0 +1,176 @@
+/** 阿里巴巴iconfont.cn */
+@font-face {
+  font-family: "iconfont"; /* Project id 3374930 */
+  src: url('iconfont.eot?t=1651641076170'); /* IE9 */
+  src: url('iconfont.eot?t=1651641076170#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff2?t=1651641076170') format('woff2'),
+       url('iconfont.woff?t=1651641076170') format('woff'),
+       url('iconfont.ttf?t=1651641076170') format('truetype'),
+       url('iconfont.svg?t=1651641076170#iconfont') format('svg');
+}
+
+/** 类为iconfont的块级元素，会被匹配到，并根据第二个类也就是下面的el-icon-xxx来决定要在该元素前:before什么图标 */
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.el-icon-wendang:before {
+  content: "\e607";
+}
+
+.el-icon-image-fill:before {
+  content: "\e860";
+}
+
+.el-icon-zhiding:before {
+  content: "\eb16";
+}
+
+.el-icon-fabusekuai:before {
+  content: "\ec46";
+}
+
+.el-icon-fabiaowenzhang:before {
+  content: "\e648";
+}
+
+.el-icon-dianzan:before {
+  content: "\ec7f";
+}
+
+.el-icon-guanyuwomen:before {
+  content: "\e682";
+}
+
+.el-icon-zhaopian:before {
+  content: "\e633";
+}
+
+.el-icon-xitong:before {
+  content: "\e649";
+}
+
+.el-icon-list:before {
+  content: "\e6a8";
+}
+
+.el-icon-tuichu:before {
+  content: "\e606";
+}
+
+.el-icon-quanxianguanli:before {
+  content: "\e62d";
+}
+
+.el-icon-tupian:before {
+  content: "\e8ba";
+}
+
+.el-icon-mima:before {
+  content: "\e632";
+}
+
+.el-icon-fenlei:before {
+  content: "\e638";
+}
+
+.el-icon-gongkai:before {
+  content: "\e6a9";
+}
+
+.el-icon-files:before {
+  content: "\e894";
+}
+
+.el-icon-user:before {
+  content: "\e683";
+}
+
+.el-icon-chat-full:before {
+  content: "\e9b1";
+}
+
+.el-icon-caogaoxiang:before {
+  content: "\e726";
+}
+
+.el-icon-APIjiekouguanli:before {
+  content: "\e644";
+}
+
+.el-icon-jiaoseliebiao:before {
+  content: "\e639";
+}
+
+.el-icon-wenzhangliebiao:before {
+  content: "\e653";
+}
+
+.el-icon-liebiao:before {
+  content: "\e600";
+}
+
+.el-icon-biaoqing:before {
+  content: "\e601";
+}
+
+.el-icon-liuyan:before {
+  content: "\e744";
+}
+
+.el-icon-caidan:before {
+  content: "\e790";
+}
+
+.el-icon-iconfontdongtaidianji:before {
+  content: "\e62e";
+}
+
+.el-icon-caozuorizhi:before {
+  content: "\e668";
+}
+
+.el-icon-yidongyunkongzhitaiicon58:before {
+  content: "\e74d";
+}
+
+.el-icon-shouyeshouye:before {
+  content: "\e629";
+}
+
+.el-icon-biaoqian:before {
+  content: "\e63d";
+}
+
+.el-icon-yemianpeizhi:before {
+  content: "\e61f";
+}
+
+.el-icon-fangwenliang:before {
+  content: "\e634";
+}
+
+.el-icon-pinglun:before {
+  content: "\e891";
+}
+
+.el-icon-xiaoxi:before {
+  content: "\e62f";
+}
+
+.el-icon-fuzhi:before {
+  content: "\e61b";
+}
+
+.el-icon-shezhi:before {
+  content: "\e70f";
+}
+
+.el-icon-huishouzhan:before {
+  content: "\e61c";
+}
+
