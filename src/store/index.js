@@ -15,11 +15,14 @@ export default new Vuex.Store({
         //用户Info
         userId: null,
         roles: null,
-        userMenuList: [],
         avatar: null,
         nickname: null,
         intro: null,
         webSite: null,
+        //可访菜单
+        userMenuList: [],
+        //是否折叠隐藏
+        collapse: false
     },
     //同步 commit
     mutations: {
