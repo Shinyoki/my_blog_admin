@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     文章
   </div>
 </template>
@@ -11,5 +11,7 @@ export default {
 </script>
 
 <style scoped>
-
+ .container {
+   background-color: red;
+ }
 </style>

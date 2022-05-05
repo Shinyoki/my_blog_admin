@@ -30,7 +30,9 @@ export default {
         {value: 'redirect404', label: 'push到404'},
         {value: 'testMessageHtml', label: '测试html格式的message'},
         {value: 'testInitMenu', label: '测试初始菜单函数'},
-        {value: 'push1', label: '测试路由'}
+        {value: 'push1', label: '测试路由'},
+        {value: 'arrayRemove', label: '测试js数组的删除'},
+        {value: 'arrayFilter', label: '测试数组filter'}
       ],
       user: {
         username: 'admin@qq.com',
@@ -40,7 +42,23 @@ export default {
   },
   methods: {
     execute() {
-      this[this.value]()
+      this[this.value]();
+    },
+    arrayFilter() {
+      let arr = [1, 2, 3, 4, 5];
+      let arr2 = [233, 444];
+      // arr.splice(0, 0, arr2);
+      // arr.push(arr2);
+      arr = arr.concat(arr2);
+      console.table(arr);
+    },
+    arrayRemove() {
+      let arr = [1, 2, 3, 4, 5];
+      console.table(arr)
+      let index = arr.findIndex(item => item == 3);
+      arr.splice(index, 1);
+      console.table(arr)
+      console.log(arr.length)
     },
     push1() {
       console.table(this.$router.getRoutes())

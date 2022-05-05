@@ -34,7 +34,7 @@ export function initMenus() {
                         curMenu.component = generateComponentView(curMenu.component)
                     })
                 }
-            })
+            });
 
             //记录组件信息加载到全局状态vuex中
             vuex.commit("saveUserMenuList", userMenus);
@@ -46,7 +46,7 @@ export function initMenus() {
                 path: "*",
                 name: "资源不存在",
                 component: () => import("@/views/error/404/404View")
-            })
+            });
         }
     })
 }

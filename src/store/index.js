@@ -8,7 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     //全局状态
     state: {
-        //路由
+        //路由历史
         tabList: [
             {name: '首页', path: '/'}
         ],
@@ -63,7 +63,49 @@ export default new Vuex.Store({
          */
         saveUserMenuList(state, menuList) {
             state.userMenuList = menuList
+        },
+
+        /**
+         * 切换侧边栏是否折叠状态
+         * @param state
+         */
+        changeCollapse(state) {
+            state.collapse = !state.collapse;
+        },
+
+        /**
+         * 删除点击侧边栏元素后位于头部导航栏处生成的历史标签
+         * @param state
+         * @param routeElement  element of Tablist
+         */
+        removeTab(state, routeElement) {
+            let index = state.tabList.findIndex(item => item.name == routeElement.name);
+            state.tabList.splice(index, 1);
+        },
+
+        /**
+         * 重置到只有首页的路由历史状态
+         * @param state
+         */
+        resetTabList(state) {
+            state.tabList = [{name: '首页', path: '/'}];
+        },
+
+        /**
+         * 添加新的路由
+         * @param state
+         * @param curRoute
+         */
+        addTab(state, curRoute) {
+            //找不到路由，就添加
+            if (-1 === state.tabList.findIndex(element => element.name === curRoute.name)) {
+                state.tabList.push({
+                    name: curRoute.name,
+                    path: curRoute.path
+                })
+            }
         }
+
     },
     //异步 dispatch
     actions: {
