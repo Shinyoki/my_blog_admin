@@ -7,6 +7,7 @@
       <div class="collapse-container" @click="changeCollapse">
         <i :class="foldClass"/>
       </div>
+
 <!--      面包屑-->
       <el-breadcrumb>
         <el-breadcrumb-item
@@ -31,11 +32,19 @@
           <el-avatar :size="40" :src="this.$store.state.avatar"/>
 <!--          选项菜单-->
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="setting">
-              <font-awesome-icon icon="fa-solid fa-user" />个人中心
+
+            <el-dropdown-item command="setting" >
+              <span>
+                <font-awesome-icon icon="fa-solid fa-user" />
+              </span>
+              个人中心
             </el-dropdown-item>
+
             <el-dropdown-item command="logout" divided>
-              <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket"/>退出登录
+              <span>
+                <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket"/>
+              </span>
+              退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -43,7 +52,7 @@
     </div>
 
 <!--    历史标签栏-->
-    <div class="tab-view-container">
+    <div class="tabs-view-container">
 <!--      展示添加到state.tablist里的元素-->
       <div class="tabs-wrapper">
 <!--        这时候就体现出Vuex里存的tablist路由历史的作用了-->
@@ -62,6 +71,7 @@
         </span>
 
       </div>
+<!--      全部关闭-->
       <div
           class="tabs-close-element"
           style="float: right"
@@ -102,7 +112,8 @@ export default {
     for (let route of matchedRoutes) {
       this.breadcrumbList[index] = {
         name: route.name,
-        path: route.path
+        path: route.path,
+        redirect: route.redirect
       }
     }
     //添加点击过的tabList
@@ -128,9 +139,6 @@ export default {
     },
     changeCollapse() {
       this.$store.commit("changeCollapse")
-    },
-    foldClass() {
-      return this.$store.state.collapse ? "el-icon-s-unfold" : "el-icon-s-fold"
     },
     handleCommand(command) {
       if (command === "setting") {
@@ -173,10 +181,151 @@ export default {
       }
       this.fullscreen = !this.fullscreen;
     }
+  },
+  computed: {
+    foldClass() {
+      return this.$store.state.collapse ? "el-icon-s-unfold" : "el-icon-s-fold"
+    }
   }
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+.top-container{
+  //上层导航栏
+  .nav-bar{
+    display: flex;
+    align-items: center;
+
+    padding-left: 15px;
+    padding-right: 30px;
+
+    height: 50px;
+
+    box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+
+    //折叠按钮
+    .collapse-container{
+      font-size: 1.25rem;
+      cursor: pointer;
+      margin-right: 24px;
+    }
+
+    //右侧菜单
+    .right-menu {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+
+      //全屏
+      .screen-full{
+        cursor: pointer;
+        margin-right: 1rem;
+        font-size: 1.1rem;
+      }
+
+    }
+
+  }
+
+  //历史标签栏
+  .tabs-view-container {
+    display: flex;
+    padding-left: 2vh;
+    padding-right: 2vh;
+    height: 33px;
+    border-bottom: 1px solid #d8dce5;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12),
+    0 0 3px 0 rgba(0, 0, 0, .04);
+
+    position: relative;
+
+    //历史标签
+    .tabs-wrapper{
+      width: 90%;
+      overflow-y: hidden;
+      overflow-x: auto;
+
+      //未激活样式
+      .tabs-view-element {
+        display: inline-block;
+        height: 26px;
+        cursor: pointer;
+        line-height: 26px;
+        padding: 0 8px;
+        font-size: 1rem;
+        margin-top: 4px;
+        margin-left: 5px;
+
+        background-color: #fff;
+        color: #495060;
+        border: solid 1px #d8dce5;
+        border-radius: 10%;
+
+        transition:.4s .4s ease-in-out;
+
+        &:hover{
+          background-color: #2299dd;
+        }
+      }
+
+      //已激活样式
+      .tabs-view-element-active {
+        //复制
+        display: inline-block;
+        height: 26px;
+        line-height: 26px;
+        cursor: pointer;
+        padding: 0 8px;
+        font-size: 1rem;
+        margin-top: 4px;
+        margin-left: 5px;
+
+        background-color: #42b983;
+        color: #fff;
+        border: solid 1px #3ebb34;
+        border-radius: 10%;
+
+        transition: .4s .4s ease-in-out;
+      }
+
+
+    }
+
+    //全部关闭
+    .tabs-close-element {
+      position: absolute;
+      right: 10px;
+      height: 25px;
+      line-height: 25px;
+
+      border: solid 1px #d8dce5;
+      color: #495060;
+      background-color: #ffffff;
+      cursor: pointer;
+      border-radius: 10%;
+
+      padding: 0 8px;
+      font-size: .9rem;
+      margin-top: 4px;
+      margin-left: 5px;
+
+      transition: .4s .4s ease-in-out;
+
+      &:hover{
+        background-color: red;
+      }
+    }
+  }
+}
+//可能存在的滑动栏
+*::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  border-radius: 0.5rem;
+  background-color: rgba(144, 147, 153, 0.3);
+}
 
 </style>

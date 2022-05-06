@@ -15,8 +15,8 @@
     <el-container :class="'main-container ' + isHidden">
 
   <!--      header-->
-      <el-header style="background-color: #4d84e2; height: auto; padding: 0">
-<!--        key 属性的另一种用法：触发组件的强制替换-->
+      <el-header style=" height: auto; padding: 0">
+<!--        key 属性的另一种用法：触发组件的强制重新渲染-->
 <!--        https://juejin.cn/post/6844903976245166088-->
           <NavigatorBar :key="this.$route.fullPath"/>
       </el-header>
@@ -25,7 +25,7 @@
       <el-main style="background-color: #0edc4f">
         <div onauxclick="fade-transform-box">
           <transition name="fade-transform" mode="out-in">
-            <router-view :key="$route.fullPath" />
+            <router-view  :key="$route.fullPath"/>
           </transition>
         </div>
       </el-main>
