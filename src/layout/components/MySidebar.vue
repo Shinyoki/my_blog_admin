@@ -1,5 +1,7 @@
 <template>
   <div>
+<!--    这里的饿了么菜单开启了路由模式， 之后的el-menu-item只要key绑定了某个路径，其效果就跟router link一样-->
+<!--    VueRouter的一个特性是，有个父子路由，夫是xxx,component是Layout,子是cxxx,componnet是test，则只输入children的路径就可以连同Layout,test一起渲染-->
     <el-menu
         router
         class="side-nav-bar"

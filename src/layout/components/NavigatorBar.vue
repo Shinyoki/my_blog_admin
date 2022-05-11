@@ -15,7 +15,7 @@
             :key="index"
         >
 <!--          当该面包屑元素是否具有可重定向内容，来决定选择哪种显示方式-->
-          <span v-if="item.redirect">{{ item.name }}</span>
+          <span v-if="index===1 || item.redirect">{{ item.name }}</span>
           <router-link v-else :to="item.path">{{ item.name }}</router-link>
         </el-breadcrumb-item>
       </el-breadcrumb>
@@ -103,19 +103,21 @@ export default {
      * 得到的实际是 从父路由到children路由的数组，但是，不包含 {path:"/"}根路由
      * https://blog.csdn.net/mochenangel/article/details/109855840
      */
-    let matchedRoutes = this.$route.matched;
+    //效果：过滤掉name为null的一级标签
+    let matchedRoutes = this.$route.matched.filter(item => item.name);
+    // console.table(matchedRoutes)
     if (matchedRoutes && matchedRoutes[0].name !== '首页') {
       //concat会得到副本
       matchedRoutes = [{path: '/', name: '首页'}].concat(matchedRoutes);
     }
-    let index = 0;
-    for (let route of matchedRoutes) {
-      this.breadcrumbList[index] = {
-        name: route.name,
-        path: route.path,
-        redirect: route.redirect
-      }
+    for (let index = 0; index < matchedRoutes.length; index++) {
+        this.breadcrumbList[index] = {
+          name: matchedRoutes[index].name,
+          path: matchedRoutes[index].path,
+          redirect: matchedRoutes[index].redirect,
+        };
     }
+
     //添加点击过的tabList
     this.$store.commit("addTab", this.$route)
   },

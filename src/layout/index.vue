@@ -1,5 +1,4 @@
 <template>
-<!--  //TODO 布局页-->
 
 <!--  饿了么顶层容器-->
   <el-container>
@@ -22,7 +21,7 @@
       </el-header>
 
 <!--      components-->
-      <el-main style="background-color: #0edc4f">
+      <el-main >
         <div onauxclick="fade-transform-box">
           <transition name="fade-transform" mode="out-in">
             <router-view  :key="$route.fullPath"/>
@@ -39,16 +38,18 @@ import NavigatorBar from "@/layout/components/NavigatorBar";
 export default {
   name: "IndexView",
   components: {NavigatorBar, MySidebar },
-  data() {
-    return {
-      isHidden: this.$store.state.collapse ? "hide" : ""
+  computed: {
+    isHidden: function () {
+      //将this.$store.state.collapse ?简单的放在data() method中无法实时动态地监听到this.$store.state.collapse的变化
+      //需要使用computed
+      return this.$store.state.collapse ? "hide" : ""
     }
   },
   methods: {
     changeState() {
       this.$store.state.collapse = !this.$store.state.collapse
     }
-  }
+  },
 }
 </script>
 

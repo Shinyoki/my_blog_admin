@@ -32,7 +32,8 @@ export default {
         {value: 'testInitMenu', label: '测试初始菜单函数'},
         {value: 'push1', label: '测试路由'},
         {value: 'arrayRemove', label: '测试js数组的删除'},
-        {value: 'arrayFilter', label: '测试数组filter'}
+        {value: 'arrayFilter', label: '测试数组filter'},
+        {value: 'push2Home', label: 'push到主页'}
       ],
       user: {
         username: 'admin@qq.com',
@@ -43,6 +44,9 @@ export default {
   methods: {
     execute() {
       this[this.value]();
+    },
+    push2Home() {
+      this.$router.push({})
     },
     arrayFilter() {
       let arr = [1, 2, 3, 4, 5];

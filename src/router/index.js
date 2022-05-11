@@ -10,12 +10,6 @@ const routers = [
         name: "登录",
         hidden: true,
         component: () => import("../views/login/LoginView.vue")
-    },
-    {
-        //虽然加了就Duplicate named routes definition = =，反正以后也不用addRoutes()了，碍眼就碍眼吧
-        path: '/',
-        name: "首页",
-        component: () => import("@/layout/index")
     }
 
 ]

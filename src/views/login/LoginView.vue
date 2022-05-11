@@ -133,7 +133,6 @@ export default {
 
                 this.postRequest("/login", userDetails).then(res=>{
                   if (res.data.flag) {
-                    console.log("开始处理用户数据...")
                     //res.data ==> userDetails
                     //存储用户信息
                     this.$store.commit("login", res.data.data);
