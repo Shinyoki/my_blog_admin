@@ -15,7 +15,9 @@
             <font-awesome-icon class="front-fa" :icon="['fas', 'fa-lock']"/>
             <input type="password" @keyup="valid" id="sign_password" v-model="sign.password" name="password" placeholder="密码"/>
           </div>
-          <input type="button" @click="doLogin()" value="登录" class="btn sign"/>
+          <div v-loading.fullscreen.lock="lLoading">
+            <input type="button" @click="doLogin()"  value="登录" class="btn sign"/>
+          </div>
 <!--          其他登录方式-->
           <p class="social-text">选择其他登录方式</p>
           <div class="social-media">
@@ -49,7 +51,7 @@
             <font-awesome-icon class="front-fa" :icon="['fas', 'fa-lock']"/>
             <input type="password" @keyup="valid" id="sign_up_password" v-model="sign_up.password" name="password" placeholder="密码"/>
           </div>
-          <input type="button" @click="doRegist()" value="注册" class="btn signup"/>
+          <input type="button" @click="doRegist()" v-loading.fullscreen.lock="rLoading" value="注册" class="btn signup"/>
         </form>
       </div>
 
@@ -62,7 +64,7 @@
           <h3>还没有账号？</h3>
 <!--          不要在admin项目里面用-->
           <p>要是没有账号可以点击下面的按钮来注册哦~</p>
-          <button class="btn transparent" id="sign-up-btn">去注册</button>
+          <button class="btn transparent" id="sign-up-btn" >去注册</button>
         </div>
 
         <img src="https://cdn.jsdelivr.net/gh/Shinyoki/blog_images_repository/images/register.svg" class="images">
@@ -94,6 +96,8 @@ export default {
   },
   data() {
     return {
+      rLoading: false,
+      lLoading: false,
       sign: {
         username: "",
         password: ""
@@ -113,6 +117,7 @@ export default {
       })
     },
     doLogin() {
+      this.lLoading = true;
       //验证表单
       if (this.signin()) {
         //腾讯防水墙
@@ -141,9 +146,12 @@ export default {
                     this.$message.success("登陆成功")
                     //跳转
                     this.$router.push({path: '/'})
+                    this.lLoading = false
+                    return;
                   }
                 })
               }
+              this.lLoading = false
             }
         )
         //显示验证码

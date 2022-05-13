@@ -19,11 +19,11 @@ import VueCalenderHeatmap from "vue-calendar-heatmap"
 import "vue-calendar-heatmap/dist/vue-calendar-heatmap.css"
 //VueEcharts组件 & js resources
 import VueEcharts from "vue-echarts"
-import "echarts/lib/chart/line"
+import "echarts/lib/chart/line" //lib:折线、饼图、、、 js绘制资源
 import "echarts/lib/chart/pie"
 import "echarts/lib/chart/bar"
 import "echarts/lib/chart/map"
-import "echarts/lib/component/tooltip"
+import "echarts/lib/component/tooltip" //lib:悬浮面板、图例、标题组件
 import "echarts/lib/component/legend"
 import "echarts/lib/component/title"
 //Vuex

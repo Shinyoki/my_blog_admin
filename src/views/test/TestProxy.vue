@@ -10,7 +10,6 @@
       </el-option>
     </el-select>
     <div v-if="show">
-
     </div>
   </div>
 </template>
@@ -38,12 +37,16 @@ export default {
       user: {
         username: 'admin@qq.com',
         password: '1234567'
-      }
+      },
+      loading: false,
     }
   },
   methods: {
     execute() {
       this[this.value]();
+    },
+    change() {
+      this.loading = !this.loading
     },
     push2Home() {
       this.$router.push({})
