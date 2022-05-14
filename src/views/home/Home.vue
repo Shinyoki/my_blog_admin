@@ -53,7 +53,7 @@
     </el-row>
     <!--    echarts:浏览量-->
     <el-row :gutter="30" style="margin-top: 1.2rem">
-      <el-col span="14" >
+      <el-col :span="14" >
         <el-card >
           <div class="e-title">一周访问量</div>
           <div style="height: 400px">
@@ -111,7 +111,7 @@
                 <el-radio :label="2">访客</el-radio>
               </el-radio-group>
             </div>
-            <v-chart :options="userAreaMapOptions"/>
+            <v-chart :options="userAreaMap" />
           </div>
         </el-card>
       </el-col>
@@ -120,6 +120,9 @@
 </template>
 
 <script>
+//中国地图
+import "@/assets/js/china"
+
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "IndexView",
@@ -261,11 +264,11 @@ export default {
         ]
       },
       //地理map
-      userAreaMapOptions: {
+      userAreaMap: {
         tooltip: {
-          formatter: function (params) {
-            let value = params.value ? params.value : 0;
-            return params.seriesName + "<br />" + params.name + ": " + value;
+          formatter: function(e) {
+            var value = e.value ? e.value : 0;
+            return e.seriesName + "<br />" + e.name + "：" + value;
           }
         },
         visualMap: {
@@ -299,15 +302,15 @@ export default {
               color: "#6DCAEC"
             }
           ],
-          show: 10
+          show: !0
         },
         geo: {
-          map: 'china',
+          map: "china",
           zoom: 1.2,
-          layoutCenter: ["50%", "50%"],
+          layoutCenter: ["50%", "50%"], //地图中心在屏幕中的位置
           itemStyle: {
             normal: {
-              borderColor: "rgba(0, 0, 0, .2)"
+              borderColor: "rgba(0, 0, 0, 0.2)"
             },
             emphasis: {
               areaColor: "#F5DEB3",
@@ -320,10 +323,10 @@ export default {
         series: [
           {
             name: "用户人数",
-            type: 'map',
+            type: "map",
             geoIndex: 0,
-            areaColor: "#0F88F0",
-            data: []
+            data: [],
+            areaColor: "#0FB8F0"
           }
         ]
       },
@@ -331,11 +334,25 @@ export default {
 
     }
   },
+  watch: {
+    typeOfUser() {
+      this.initUserMap()
+    }
+
+  },
   created() {
     this.initData()
-    //TODO 用户分布
+    this.initUserMap()
   },
   methods: {
+    initUserMap() {
+      let params = {
+        type: this.typeOfUser
+      }
+      this.axios.get("/api/admin/users/area", {params} ).then(res => {
+        this.userAreaMap.series[0].data = res.data.data;
+      })
+    },
     initData() {
       this.getRequest("/admin").then(res => {
         let data = res.data.data;
@@ -383,10 +400,8 @@ export default {
           })
         }
 
-
         //element loading
         this.loading = false;
-        console.log(data)
       })
     }
   }

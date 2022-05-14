@@ -13,6 +13,7 @@ export default {
     if (this.$store.state.userId != null) {
       initMenus()
     }
+    this.postRequest("/record");
   }
 }
 </script>

@@ -45,7 +45,11 @@ import "@/assets/css/iconfont/iconfont.css"
 import "@/assets/css/iconfont/iconfont"
 //静态配置
 import config from "@/assets/js/config"
-
+// dayjs工具
+import dayjs from "dayjs";
+//富文本编辑器
+import MavonEditor from "mavon-editor"
+import "mavon-editor/dist/css/index.css"
 
 /**
  * 进度条渲染逻辑
@@ -79,7 +83,9 @@ NProgress.configure({
   minimum: 0.3          //初始化时进度
 })
 function changeNPColor(color) {
-  document.getElementsByClassName('bar')[0].style.setProperty("background", color)
+  if (document.getElementsByClassName('bar')[0]) {
+    document.getElementsByClassName('bar')[0].style.setProperty("background", color)
+  }
 }
 
 /**
@@ -108,7 +114,8 @@ Axios.interceptors.response.use(function (response) {
   //后端将所有的rest请求都转为json字符串，基本上得到的都是200响应码，因此要拦截处理自定义的响应码
   if (response.data.flag) {
     //true 成功 原样返回response
-  } else {
+  } else if (response.data != "" && !response.data.flag){
+    console.log(response)
     //false 失败
     errorRedirect(response.data.code)
     Message({
@@ -168,6 +175,7 @@ Vue.component('remote-script', {
 Vue.use(ElementUI)
 Vue.use(VueAxios, Axios)
 Vue.use(VueCalenderHeatmap)
+Vue.use(MavonEditor)
 //给VueEcharts组件改个名
 Vue.component("v-chart", VueEcharts)
 //弄几个全局函数
@@ -179,6 +187,17 @@ Vue.prototype.putRequest = putRequest;
 Vue.component("font-awesome-icon", FontAwesomeIcon)
 //自定义配置
 Vue.prototype.config = config
+//dayjs
+Vue.prototype.$dayjs = dayjs;
+
+//注册全局过滤器，将 data中名为date & datetime的属性filter
+Vue.filter("date", function (value, formatStr = "YYYY-MM-DD") {
+  return dayjs(value).format(formatStr);
+});
+
+Vue.filter("dateTime", function (value, formatStr = "YYYY-MM-DD HH:mm:ss") {
+  return dayjs(value).format(formatStr);
+});
 
 new Vue({
   //this.$router

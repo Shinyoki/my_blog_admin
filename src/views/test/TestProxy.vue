@@ -25,6 +25,7 @@ export default {
       value: '',
       list: [
         {value: 'doRequest', label: 'ping请求'},
+        {value: 'doGet', label: 'get请求'},
         {value: 'doLogin', label: '登录'},
         {value: 'redirect404', label: 'push到404'},
         {value: 'testMessageHtml', label: '测试html格式的message'},
@@ -44,6 +45,13 @@ export default {
   methods: {
     execute() {
       this[this.value]();
+    },
+    doGet() {
+      this.axios.get("/api/test/get1",{
+        params: {
+          type: 2
+        }
+      })
     },
     change() {
       this.loading = !this.loading
