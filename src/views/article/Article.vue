@@ -93,9 +93,33 @@
 <script>
 export default {
   name: "ArticleView",
+  created() {
+    const path = this.$route.path;
+    const pathArr = path.split("/");
+    const articleId = pathArr[2];
+    this.$message.success(path)
+    if (articleId) {
+      this.getRequest("/admin/articles/" + articleId).then(res => {
+        //有id就初始化为对应article
+        this.article = res.data.data;
+      })
+    } else {
+      //没有就去sessionStorage里取
+      const article = sessionStorage.getItem("article");
+      if (article) {
+        this.article = JSON.parse(article);
+      }
+    }
+  },
+  destroyed() {
+    //自动保存
+    this.autoSaveArticle();
+  },
   data() {
     return {
       categoryName: "",
+      categoryList: [],
+      tagList: [],
       article: {
         id: null,
         articleTitle: this.$dayjs(new Date()).format("YYYY-MM-DD"),
@@ -108,12 +132,30 @@ export default {
         type: 1,
         status: 1 //1.公开 2.私密 3.评论可见
       },
-      addOrEdit: true
+      addOrEdit: false,
+      autoSave: true
     }
   },
   methods: {
-    //TODO 保存文章草稿
-    saveArticleDraft() {
+    //查询 目录
+    listCategories() {
+      //搜索全部
+      this.getRequest("/admin/categories/search").then(res => {
+        this.categoryList =  res.data.data;
+      })
+    },
+    //查询 标签
+    listTags() {
+      this.getRequest("/admin/tags/search").then(res => {
+        this.tagList = res.data.data;
+      })
+    },
+    //不显示分类标签
+    removeCategory() {
+      this.article.categoryName = null
+    },
+    //验证
+    valid() {
       if (this.article.articleTitle.trim() === "") {
         this.$message.error("文章标题不能为空")
         return false;
@@ -122,11 +164,40 @@ export default {
         this.$message.error("文章内容不能为空")
         return false;
       }
-
+      return true;
     },
-    //TODO 发布前的弹窗确认
+    // 保存文章草稿
+    saveArticleDraft() {
+      if (!this.valid()) {
+        return false;
+      }
+      //草稿模式下不会保存文章的分类
+      this.article.status = 3;
+      this.postRequest("/admin/articles", this.article).then(res => {
+        if (res.data.flag) {
+          this.$notify.success({
+            title: '成功',
+            message: '保存草稿成功'
+          })
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: '保存草稿失败'
+          })
+        }
+      })
+      //保存完草稿，不需要自动保存
+      this.autoSave = false;
+    },
+    // 发布前的弹窗确认
     openModel() {
+      if (!this.valid()) {
+        return false;
+      }
+      this.listCategories();
+      this.listTags();
 
+      this.addOrEdit = true
     },
     //TODO mavon-editor 添加图标事件回调函数
     uploadImg() {
@@ -145,17 +216,49 @@ export default {
             cb(res.data.data)
           })
     },
+    //保存
     saveCategory() {
       if (this.categoryName.trim() !== "") {
         this.article.categoryName = this.categoryName
         this.categoryName = ""
       }
     },
+    //选中候选内容处理
     handleSelectCategories(item) {
-      console.log("点击了候选内容")
-      console.log(item)
+      this.article.categoryName = item.categoryName
+    },
+    //执行自动保存
+    autoSaveArticle() {
+      if (
+          //启用自动上传 && 验证通过 && 已有articleId
+          this.autoSave &&
+          this.valid()  &&
+          this.article.id != null
+      ) {
+        //上传到服务器
+        this.postRequest("/admin/articles", this.article).then(res => {
+          if (res.data.flag) {
+            this.$notify.success({
+              title: '成功',
+              message: '自动保存成功'
+            })
+          } else {
+            this.$notify.error({
+              title: '失败',
+              message: '自动保存失败'
+            })
+          }
+        });
+      }
+      if (
+          //启用自动上传 && 没有已有的articleId
+          this.autoSave &&
+          this.article.id == null
+      ) {
+        //临时存储到sessionStorage中
+        sessionStorage.setItem("article", JSON.stringify(this.article));
+      }
     }
-    // setCategory()?
   }
 
 }
