@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button type="primary" @click="execute">点我发送请求</el-button>
-    <el-select v-model="value" placeholder="请选择">
+    <el-select v-model="value">
       <el-option
           v-for="item in list"
           :key="item.value"
