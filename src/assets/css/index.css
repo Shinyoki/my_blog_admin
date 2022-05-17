@@ -1,0 +1,73 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+html{
+    /*让定位滚动拥有过渡动画（非用户触发的滚动）*/
+    scroll-behavior: smooth;
+}
+
+/*饿了么card*/
+.el-card.is-always-shadow,
+.el-card.is-hover-shadow:focus,
+.el-card.is-hover-shadow:hover {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+/*Layout内容view的容器类名*/
+.main-card {
+    min-height: calc(100vh - 126px);
+}
+
+/*Layout内容view的容器标题*/
+.title {
+    position: relative;
+    left: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #202a34;
+}
+
+.title::before {
+    content: '';
+    width: 24px;
+    height: 16px;
+    border-left: 3px solid #0081ff;
+    margin-right: 20px;
+}
+
+/*操作相关的容器，自动变为flex布局*/
+.operation-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    margin-top: 1.25rem;
+}
+
+.side-nav-bar .el-scrollbar__wrap {
+    overflow-x: hidden !important;
+}
+.el-upload-list__item-thumbnail {
+    object-fit: cover !important;
+}
+
+/*el-pagination组件 自动右float*/
+.pagination-container {
+    float: right;
+    margin-bottom: 1.25rem;
+    margin-top: 1.25rem;
+}
+
+/*悬浮窗标题（内部有i图标时）*/
+.dialog-title-container {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.dialog-title-container i {
+    font-size: 1.5rem;
+    margin-right: .3rem;
+}
+

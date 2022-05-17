@@ -50,6 +50,8 @@ import dayjs from "dayjs";
 //富文本编辑器
 import MavonEditor from "mavon-editor"
 import "mavon-editor/dist/css/index.css"
+//自定义全局样式
+import "@/assets/css/index.css"
 
 /**
  * 进度条渲染逻辑
@@ -189,6 +191,8 @@ Vue.component("font-awesome-icon", FontAwesomeIcon)
 Vue.prototype.config = config
 //dayjs
 Vue.prototype.$dayjs = dayjs;
+
+
 
 //注册全局过滤器，将 data中名为date & datetime的属性filter
 Vue.filter("date", function (value, formatStr = "YYYY-MM-DD") {

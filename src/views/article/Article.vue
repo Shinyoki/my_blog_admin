@@ -31,7 +31,7 @@
     <mavon-editor
       ref="mdEditor"
       v-model="article.articleContent"
-      @imgAdd="uploadImg"
+      @imgAdd="uploadImgForMavon"
       style="height: calc(100vh - 260px)"
       />
     <!--  弹出框-->
@@ -41,7 +41,7 @@
         itemprop="3vh"
     >
       <div class="dialog-title-container" slot="title">
-        发布文章
+        <i class="el-icon-warning" style="color:#ff9900" />发布文章
       </div>
 <!--      文章数据-->
       <el-form
@@ -89,7 +89,7 @@
               >
 <!--              https://blog.csdn.net/mouday/article/details/107426163-->
               <template slot-scope="{item}">
-                <div>{{item}}</div>
+                <div>{{item.categoryName}}</div>
               </template>
             </el-autocomplete>
             <!--          分类显示-->
@@ -191,14 +191,46 @@
             class="upload-cover"
             drag
             action="/api/admin/articles/images"
-            multiple
+            :multiple="false"
             :before-upload="beforeUpload"
             :on-success="uploadCover"
             >
-
+<!--            没封面-->
+            <i class="el-icon-upload" v-if="article.articleCover === ''"></i>
+            <div class="el-upload__text" v-if="article.articleCover === ''">将文件拖到此处，或<em>点击上传</em></div>
+<!--            有封面-->
+            <img
+              v-else
+              :src="article.articleCover"
+              width="360px"
+              height="180px"
+              />
           </el-upload>
         </el-form-item>
+<!--        form-item:置顶-->
+        <el-form-item label="置顶">
+          <el-switch
+            v-model="article.isTop"
+            active-color="#13ce66"
+            inactive-color="#F4F4F5"
+            :active-value="1"
+            :inactive-value="0"
+            />
+        </el-form-item>
+<!--        form-item:发布形式-->
+        <el-form-item label="发布形式">
+          <el-radio-group v-model="article.status">
+            <el-radio :label="1">公开</el-radio>
+            <el-radio :label="2">私密</el-radio>
+            <el-radio :label="3">评论可见</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
+<!--      弹出框页脚-->
+      <div slot="footer">
+        <el-button @click="addOrEdit = false">取消编辑</el-button>
+        <el-button type="danger" @click="saveOrUpdateArticle">发表</el-button>
+      </div>
     </el-dialog>
   </el-card>
 
@@ -206,13 +238,14 @@
 </template>
 
 <script>
+//图片压缩工具
+import * as imageConversion from "image-conversion"
 export default {
   name: "ArticleView",
   created() {
     const path = this.$route.path;
     const pathArr = path.split("/");
     const articleId = pathArr[2];
-    this.$message.success(path)
     if (articleId) {
       this.getRequest("/admin/articles/" + articleId).then(res => {
         //有id就初始化为对应article
@@ -227,7 +260,7 @@ export default {
     }
   },
   destroyed() {
-    //自动保存
+    //销毁页面时自动保存
     this.autoSaveArticle();
   },
   data() {
@@ -275,13 +308,29 @@ export default {
     }
   },
   methods: {
-    //TODO 发送图片前
-    beforeUpload() {
-
+    // 发送图片前
+    beforeUpload(file) {
+      //https://developer.mozilla.org/zh-CN/docs/Web/API/File
+      //上传文件之前的钩子，参数为上传的文件，若返回 false 或者返回 Promise 且被 reject，则停止上传。
+      return new Promise(resolve => {
+        if ((file.size / 1024) < this.config.UPLOAD_SIZE) {
+          //小于200kb，正常执行
+          resolve(file);
+        } else {
+          //https://github.com/WangYuLue/image-conversion
+          //压缩到200kb
+          imageConversion.compressAccurately(file, this.config.UPLOAD_SIZE)
+              .then(resFile => {
+                resolve(resFile);
+              });
+        }
+      })
     },
-    //TODO 封面
-    uploadCover() {
-
+    // 封面
+    uploadCover(res) {
+      console.log("更新上传后的封面")
+      console.log(res.data)
+      this.article.articleCover = res.data
     },
     //保存标签
     saveTag() {
@@ -297,7 +346,7 @@ export default {
         this.article.tagNameList.push(tagName);
       }
     },
-    //TODO 搜索标签
+    // 搜索标签
     searchTags(keywords, cb) {
       let result = this.tagList.filter(tag => {
         if (tag.tagName.toLowerCase().indexOf(keywords.toLowerCase()) > -1) {
@@ -305,12 +354,6 @@ export default {
         }
       });
       cb(result);
-      // let params = {
-      //   keywords
-      // }
-      // this.axios.get("/api/admin/tags/search", {params}).then(res => {
-      //   cb(res.data.data)
-      // })
     },
     //处理点击标签候选
     handleSelectTag(tag) {
@@ -377,6 +420,45 @@ export default {
       //保存完草稿，不需要自动保存
       this.autoSave = false;
     },
+    //保存或更新文章
+    saveOrUpdateArticle() {
+      if (this.article.articleTitle.trim() === '') {
+        this.$message.error("文章标题不能为空")
+        return false;
+      }
+      if (this.article.articleContent.trim() === '') {
+        this.$message.error("文章内容不能为空")
+        return false;
+      }
+      if (this.article.categoryName === null) {
+        this.$message.error("文章分类不能为空")
+        return false;
+      }
+      if (this.article.tagNameList.length === 0) {
+        this.$message.error("文章标签不能为空")
+        return false;
+      }
+      if (this.article.articleCover === '') {
+        this.$message.error("文章封面不能为空")
+        return false;
+      }
+
+      this.postRequest("/admin/articles", this.article).then(res => {
+        this.addOrEdit = false;
+        if (res.data.flag) {
+          this.$notify.success({
+            title: '成功',
+            message: res.data.message
+          })
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: res.data.message
+          })
+        }
+      })
+      this.autoSave = false;
+    },
     // 发布前的弹窗确认
     openModel() {
       if (!this.valid()) {
@@ -388,10 +470,32 @@ export default {
       this.addOrEdit = true
     },
     //TODO mavon-editor 添加图标事件回调函数
-    uploadImg() {
+    uploadImgForMavon(fileIndex, file) {
+      //https://github.com/hinesboy/mavonEditor#%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0
+      let formData = new FormData();
+      if ((file.size / 1024) < this.config.UPLOAD_SIZE) {
+        //添加元素
+        formData.append('file', file);
+        console.log("表单元素");
+        console.log(formData);
+        this.postRequest("admin/articles/images", formData).then(res => {
+          this.$refs.mdEditor.$img2Url(fileIndex, res.data.data);
+        });
+      } else {
+        //压缩并将压缩后的元素添加
+        imageConversion.compressAccurately(file, this.config.UPLOAD_SIZE)
+            .then(compressedFile => {
+              formData.append('file',
+                  new window.File([compressedFile], file.name, {type: file.type})
+              )
+            });
+        this.postRequest("/admin/articles/images", formData).then(res => {
+          this.$refs.mdEditor.$img2Url(fileIndex, res.data.data)
+        })
+      }
 
     },
-    //TODO 搜索建议
+    // 搜索建议
     searchCategories(keywords, cb) {
       let result = this.categoryList.filter(category => {
         if (category.categoryName.toLowerCase().indexOf(keywords.toLowerCase()) > -1) {
@@ -399,16 +503,6 @@ export default {
         }
       });
       cb(result);
-      // let params = {
-      //   keywords
-      // }
-      // this.axios
-      //     .get("/api/admin/categories/search",{ params })
-      //     .then(res => {
-      //       console.log("搜索结果")
-      //       console.table(res.data.data)
-      //       cb(res.data.data)
-      //     })
     },
     //保存
     saveCategory() {
@@ -461,8 +555,65 @@ export default {
 }
 </script>
 
-<style scoped>
- .container {
-   background-color: red;
+<style lang="less" scoped>
+ .main-card {
+   .article-title-container {
+     display: flex;
+     //align-items: center;
+
+     margin-bottom: 1.25rem;
+     margin-top: 2.25rem;
+
+     .save-btn {
+       margin-left: .75rem;
+       background-color: #fff;
+       color: #f56c6c;
+
+       transition: .6s 0s ease-in-out;
+       &:hover {
+         background-color: #f68989;
+         color: #fff;
+       }
+     }
+
+   }
+
+
  }
+ .tag-item {
+   margin-right: 1rem;
+   margin-bottom: 1rem;
+   cursor: pointer;
+ }
+
+ .tag-item-select {
+   margin-right: 1rem;
+   margin-bottom: 1rem;
+   cursor: not-allowed;
+   color: #ccccd8 !important;
+ }
+
+ .popover-container {
+   .category-item {
+     cursor: pointer;
+     padding: .6rem .5rem;
+
+     &:hover {
+       background-color: #f0f9eb;
+       color: #67c23a;
+     }
+   }
+ }
+
+ .popover-title {
+   margin-bottom: 1rem;
+   text-align: center;
+ }
+
+ .popover-container {
+   margin-top: 1rem;
+   height: 260px;
+   overflow-y: auto;
+ }
+
 </style>
