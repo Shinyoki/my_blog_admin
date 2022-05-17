@@ -23,7 +23,7 @@
 <!--      components-->
       <el-main >
         <div onauxclick="fade-transform-box">
-          <transition name="fade-transform" mode="out-in">
+          <transition  name="fade-transform" mode="out-in">
             <router-view  :key="$route.fullPath"/>
           </transition>
         </div>

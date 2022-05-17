@@ -1,6 +1,6 @@
 <template>
   <el-card class="main-card">
-    <div class="title">{{ this.$route.name }}</div>
+    <div class="card-container-title">{{ this.$route.name }}</div>
 <!--    修改：文章标题-->
     <div class="article-title-container">
 <!--      输入-保存-发布-->
@@ -41,7 +41,7 @@
         itemprop="3vh"
     >
       <div class="dialog-title-container" slot="title">
-        <i class="el-icon-warning" style="color:#ff9900" />发布文章
+        <i class="el-icon-document" style="color:#ff9900" />发布文章
       </div>
 <!--      文章数据-->
       <el-form
@@ -328,8 +328,6 @@ export default {
     },
     // 封面
     uploadCover(res) {
-      console.log("更新上传后的封面")
-      console.log(res.data)
       this.article.articleCover = res.data
     },
     //保存标签
@@ -368,16 +366,12 @@ export default {
     listCategories() {
       //搜索全部
       this.getRequest("/admin/categories/search").then(res => {
-        console.log("搜索到的所有分类：")
-        console.table(res.data.data)
         this.categoryList =  res.data.data;
       })
     },
     //查询 标签
     listTags() {
       this.getRequest("/admin/tags/search").then(res => {
-        console.log("搜索到的所有分类：")
-        console.table(res.data.data)
         this.tagList = res.data.data;
       })
     },
@@ -469,15 +463,13 @@ export default {
 
       this.addOrEdit = true
     },
-    //TODO mavon-editor 添加图标事件回调函数
+    // mavon-editor 添加图标事件回调函数
     uploadImgForMavon(fileIndex, file) {
       //https://github.com/hinesboy/mavonEditor#%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0
       let formData = new FormData();
       if ((file.size / 1024) < this.config.UPLOAD_SIZE) {
         //添加元素
         formData.append('file', file);
-        console.log("表单元素");
-        console.log(formData);
         this.postRequest("admin/articles/images", formData).then(res => {
           this.$refs.mdEditor.$img2Url(fileIndex, res.data.data);
         });
@@ -523,9 +515,11 @@ export default {
       if (
           //启用自动上传 && 验证通过 && 已有articleId
           this.autoSave &&
-          this.valid()  &&
+          this.article.articleTitle.trim() === "" &&
+          this.article.articleContent.trim() === "" &&
           this.article.id != null
       ) {
+
         //上传到服务器
         this.postRequest("/admin/articles", this.article).then(res => {
           if (res.data.flag) {

@@ -17,19 +17,20 @@ html{
 
 /*Layout内容view的容器类名*/
 .main-card {
+    position: relative;
     min-height: calc(100vh - 126px);
 }
 
 /*Layout内容view的容器标题*/
-.title {
-    position: relative;
+.card-container-title {
+    position: absolute;
     left: 0;
     font-size: 16px;
     font-weight: bold;
     color: #202a34;
 }
 
-.title::before {
+.card-container-title::before {
     content: '';
     width: 24px;
     height: 16px;
