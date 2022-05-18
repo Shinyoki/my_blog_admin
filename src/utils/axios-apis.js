@@ -8,7 +8,7 @@ export const getRequest = (url, params) => {
     return axios({
         method: 'get',
         url: `${baseUrl}${url}`,
-        data: params
+        params
     })
 }
 export const postRequest = (url, params) => {

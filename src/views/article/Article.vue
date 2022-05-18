@@ -98,7 +98,7 @@
                   v-for="category of categoryList"
                   :key="category.id"
                   class="category-item"
-                  @close="addCategory(category)"
+                  @click="addCategory(category)"
               >
                 {{ category.categoryName }}
               </div>
