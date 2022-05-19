@@ -9,7 +9,7 @@ import router from "@/router/index"
 
 export function initMenus() {
     getRequest("/menus/user/list").then(res=>{
-        if (res) {
+        if (res.data.flag) {
             let userMenus = res.data.data;
             //第一层元素都是目录，children都是菜单
             userMenus.forEach(curCatalog => {
@@ -44,6 +44,8 @@ export function initMenus() {
                 name: "资源不存在",
                 component: () => import("@/views/error/404/404View")
             });
+        } else {
+            this.$router.push({path: '/login'})
         }
     })
 }
