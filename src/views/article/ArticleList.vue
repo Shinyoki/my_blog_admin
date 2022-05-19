@@ -2,8 +2,8 @@
   <el-card class="main-card">
     <div class="card-container-title">{{this.$route.name}} </div>
 <!--    文章状态-->
-    <div class="article-status-menu" style="margin-top: 1.25rem">
-      <span>文章状态</span>
+    <div class="article-status-menu" style="margin-top: 1.55rem">
+<!--      <span style="font-weight: bold; color: black">状态：</span>-->
       <span @click="changeStatus('all')" :class="isActive('all')">全部</span>
       <span @click="changeStatus('public')" :class="isActive('public')">公开</span>
       <span @click="changeStatus('secret')" :class="isActive('secret')">私密</span>
@@ -17,11 +17,11 @@
         type="danger"
         size="small"
         icon="el-icon-delete"
-        @click="updateDeletedArticle = true"
-        v-if="isDelete === 0"
-        :disabled="articleIdList.length === 0"
+        @click="showLogicDeleteUpdateDialog = true"
+        v-if="isDelete == 0"
+        :disabled="articleIdList.length == 0"
         >
-        updateDeletedArticle批量删除
+        移入回收站
       </el-button>
       <el-button
         v-else
@@ -29,18 +29,44 @@
         size="small"
         icon="el-icon-delete"
         :disabled="articleIdList.length === 0"
-        @click="remove = true"
+        @click="showTotalRemoveDialog = true"
         >
-        remove批量删除
+        完全删除
       </el-button>
+
+<!--      批量 逻辑删除 弹出框-->
+      <el-dialog
+        :visible.sync="showLogicDeleteUpdateDialog"
+        width="30%"
+        >
+        <div class="dialog-title-container" slot="title">
+          <i class="el-icon-warning" style="color: #ff9900"/> 提示
+        </div>
+        <div>是否删除选择项？</div>
+        <div slot="footer">
+          <el-button @click="showLogicDeleteUpdateDialog = false">取消</el-button>
+          <el-button type="danger" @click="updateArticleIdListDelete">确定</el-button>
+        </div>
+      </el-dialog>
+<!--      批量 完全删除 弹出框-->
+      <el-dialog :visible="showTotalRemoveDialog" width="30%">
+        <div class="dialog-title-container" slot="title">
+          <i class="el-icon-warning" style="color: #ff9900"/> 提示
+        </div>
+        <div>是否要彻底删除选中项</div>
+        <div slot="footer">
+          <el-button @click="showTotalRemoveDialog = false">取消</el-button>
+          <el-button type="danger" @click="totalDeleteArticleIds">确定</el-button>
+        </div>
+      </el-dialog>
       <!--筛选栏-->
-      <div class="operation-selectors" style="margin-left: auto">
+      <div class="operation-container" style="margin-left: auto">
 <!--        选择：文章类型-->
         <el-select
           clearable
           v-model="type"
           size="small"
-          placeholder="请选择文章类型"
+          placeholder="文章类型"
           >
           <el-option
             v-for="(type, index) of typeList"
@@ -55,7 +81,7 @@
           filterable
           size="small"
           style="margin-left: 1rem"
-          placeholder="请选择分类"
+          placeholder="所属分类"
           v-model="categoryId"
           >
           <el-option
@@ -70,6 +96,7 @@
           clearable
           filterable
           size="small"
+          placeholder="文章标签"
           style="margin-left: 1rem"
           v-model="tagId"
           >
@@ -87,7 +114,8 @@
           v-model="keywords"
           @keyup.enter.native="searchArticles"
           prefix-icon="el-icon-search"
-          placeholder="请输入文章名"
+          placeholder="文章名"
+          style="margin-left: 15px"
           >
         </el-input>
         <el-button
@@ -224,15 +252,16 @@
         >
         <!--        TODO 待修复isTop渲染问题-->
         <template slot-scope="scope">
+          {{ scope.row.isTop }}
           <el-switch
             v-model="scope.row.isTop"
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="true"
+            :inactive-value="false"
             :disabled="scope.row.isDelete == 1"
             active-color="#13ce66"
             inactive-color="#F4F4F5"
             @change="changeTop(scope.row)"
-            />
+            ></el-switch>
         </template>
       </el-table-column>
 <!--      列：编辑 删除 回收站恢复-->
@@ -308,8 +337,9 @@
       :page-sizes="[10, 20]"
       :total="count"
       layout="total, sizes, prev, pager, next, jumper"
+      @size-change="sizeChange"
+      @current-change="currentChange"
       />
-<!--TODO 分页事件处理-->
   </el-card>
 </template>
 
@@ -323,8 +353,8 @@ export default {
   },
   data() {
     return {
-      updateDeletedArticle: false,
-      remove: false,
+      showLogicDeleteUpdateDialog: false,
+      showTotalRemoveDialog: false,
       typeList: [
         {
           value: 1,
@@ -371,6 +401,17 @@ export default {
     }
   },
   methods: {
+    //当总数有变化时
+    sizeChange(newSize) {
+      //初始化查询用参数size
+      this.size = newSize
+      this.listArticles()
+    },
+    //当前页有变化时
+    currentChange(newCur) {
+      this.current = newCur;
+      this.listArticles();
+    },
     //查询所有文章
     listArticles() {
       let params = {
@@ -386,10 +427,11 @@ export default {
         isDelete: this.isDelete
       }
       this.axios.get("/api/admin/articles",{ params }).then(res => {
+        console.log(res)
         this.articleList = res.data.data.recordList;
         this.count = res.data.data.count;
         this.loading = false;
-        // console.table(this.articleList)
+        console.log(this.count)
       })
     },
     //查询对应文章
@@ -450,7 +492,7 @@ export default {
     changeTop(curArticle) {
       let params = {
               id: curArticle.id,
-              isTop: curArticle.isTop
+              isTop: curArticle.isTop == true ? 1 : 0
             }
       this.putRequest("/admin/articles/top", params)
           .then(( res ) => {
@@ -465,12 +507,16 @@ export default {
                 message: res.data.message
               });
             }
-            this.remove = false;
+            this.showTotalRemoveDialog = false;
           });
     },
     //编辑文章：带着ArticleId跳转到文章发布页，读取并saveOrUpdate
     editArticle(articleId) {
       this.$router.push({path: '/articles/' + articleId})
+    },
+    //更新articleIdList对应文章的逻辑删除状态
+    updateArticleIdListDelete() {
+      this.updateArticleDelete(...this.articleIdList)
     },
     //更新文章的isDelete状态
     updateArticleDelete(articleId) {
@@ -494,16 +540,18 @@ export default {
           })
         }
 
-        this.updateDeletedArticle = false;
+        this.showLogicDeleteUpdateDialog = false;
       });
 
     },
+    //彻底删除articleIdList对应文章
+    totalDeleteArticleIds() {
+      this.totalDeleteArticle(...this.articleIdList)
+    },
     //完全删除（忽略逻辑删除状态）
     totalDeleteArticle(articleId) {
-      let params = {
-        articleIdList: [articleId]
-      }
-      this.deleteRequest("/admin/articles", params).then(res => {
+      let articleIdList = [articleId]
+      this.deleteRequest("/admin/articles", articleIdList).then(res => {
         if (res.data.flag) {
           this.$notify.success({
             title: "成功",
@@ -518,7 +566,7 @@ export default {
           });
         }
 
-        this.remove = false;
+        this.showTotalRemoveDialog = false;
       });
 
     }
@@ -612,5 +660,34 @@ export default {
      color: #333;
      font-weight: bold;
    }
+ }
+
+// 封面
+ .article-cover {
+   position: relative;
+   width: 100%;
+   height: 90px;
+   border-radius: 4px;
+
+   &:after {
+     position: absolute;
+     top: 0;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     content: '';
+     //加深颜色，突出图标
+     background: rgba(0, 0, 0, .2);
+   }
+ }
+// 封面图标
+ .article-status-icon {
+   position: absolute;
+   right: 1rem;
+   bottom: 1.4rem;
+
+   color: #fff;
+   font-size: 1.5rem;
+
  }
 </style>
