@@ -75,7 +75,7 @@
           <button class="btn transparent" id="sign-up-btn">去注册</button>
         </div>
 
-        <img src="https://cdn.jsdelivr.net/gh/Shinyoki/blog_images_repository/images/register.svg" class="images">
+        <img src="https://cdn.jsdelivr.net/gh/Shinyoki/images_repository/blog_images/register.svg" class="images">
       </div>
 
       <div class="panel right-panel">
@@ -85,7 +85,7 @@
           <button class="btn transparent" id="sign-in-btn">去登录</button>
         </div>
 
-        <img src="https://cdn.jsdelivr.net/gh/Shinyoki/blog_images_repository/images/log.svg" class="images">
+        <img src="https://cdn.jsdelivr.net/gh/Shinyoki/images_repository/blog_images/log.svg" class="images">
       </div>
 
     </div>
