@@ -546,11 +546,11 @@ export default {
     },
     //彻底删除articleIdList对应文章
     totalDeleteArticleIds() {
-      this.totalDeleteArticle(...this.articleIdList)
+      this.totalDeleteArticle(this.articleIdList)
     },
     //完全删除（忽略逻辑删除状态）
     totalDeleteArticle(articleId) {
-      let articleIdList = [articleId]
+      let articleIdList = articleId.length === undefined ? [articleId] : [...articleId];
       this.deleteRequest("/admin/articles", articleIdList).then(res => {
         if (res.data.flag) {
           this.$notify.success({
