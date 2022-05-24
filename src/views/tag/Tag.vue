@@ -33,6 +33,7 @@
           />
         <el-button
           size="small"
+          type="primary"
           icon="el-icon-search"
           style="margin-left: 1.2rem"
           @click="searchTags"
