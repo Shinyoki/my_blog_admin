@@ -1,5 +1,7 @@
 <template>
-  <div></div>
+  <el-card class="main-card">
+    <div class="card-container-title">{{ this.$route.name }}</div>
+  </el-card>
 </template>
 
 <script>

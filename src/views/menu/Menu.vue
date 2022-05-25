@@ -8,7 +8,7 @@
         type="primary"
         size="small"
         icon="el-icon-plus"
-        @click="openModel"
+        @click="openModel(null)"
       >
         新增菜单
       </el-button>
@@ -25,6 +25,7 @@
           type="primary"
           size="small"
           icon="el-icon-search"
+          style="margin-left: 1rem"
           @click="listMenus"
           >
           搜索
@@ -106,11 +107,7 @@
       width="30%"
       top="12vh"
       >
-      <div
-          class="dialog-title-container"
-          slot="title"
-          ref="menuTitle"
-          />
+      <div class="dialog-title-container" slot="title" ref="menuTitle"/>
       <el-form
         size="medium"
         :model="menuForm"
@@ -120,11 +117,70 @@
         <el-form-item label="菜单类型" v-if="showMenuTypeSelector">
           <el-radio-group v-model="isCatalog">
             <el-radio :label="true">目录</el-radio>
-            <el-radio :label="false">一级菜单</el-radio>
+          </el-radio-group>
+        </el-form-item>
+<!--        菜单名称-->
+        <el-form-item label="菜单名称">
+          <el-input v-model="menuForm.name"/>
+        </el-form-item>
+<!--        菜单图标-->
+        <el-form-item label="菜单图标">
+          <el-popover
+            trigger="click"
+            width="300"
+            placement="bottom-start"
+            >
+<!--            选择-->
+            <el-row>
+              <el-col
+                v-for="(icon, index) of iconList"
+                :key="index"
+                :md="12"
+                :gutter="10"
+                >
+                <div class="icon-item" @click="chooseIcon(icon)">
+                  <i :class="'iconfont ' + icon" />{{ icon }}
+                </div>
+              </el-col>
+            </el-row>
+<!--            选择展示-->
+            <el-input
+              :prefix-icon="'iconfont ' + menuForm.icon"
+              slot="reference"
+              v-model="menuForm.icon"
+              />
+          </el-popover>
+        </el-form-item>
+<!--        组件的路径：是目录是不显示-->
+        <el-form-item label="组件路径">
+          <el-input v-model="menuForm.component"/>
+        </el-form-item>
+<!--        路由路径-->
+        <el-form-item label="访问地址">
+          <el-input v-model="menuForm.path"/>
+        </el-form-item>
+<!--        排序-->
+        <el-form-item label="显示排序">
+          <el-input-number
+            v-model="menuForm.orderNum"
+            :min="1"
+            :max="10"
+            controls-position="right"
+            />
+        </el-form-item>
+<!--        显示状态-->
+        <el-form-item label="显示状态">
+          <el-radio-group v-model="menuForm.isHidden">
+            <el-radio :label="0">显示</el-radio>
+            <el-radio :label="1">隐藏</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
-<!--TODO 剩余的修改页-->
+<!--      dialog footer-->
+      <div slot="footer">
+        <el-button @click="showAddOrEditDialog = false">取消</el-button>
+        <el-button type="primary" @click="doSaveOrUpdateMenu">确定</el-button>
+      </div>
     </el-dialog>
   </el-card>
 </template>
@@ -134,13 +190,14 @@ export default {
   name: "MenuView",
   created() {
     this.listMenus();
+    this.listMenuIcons();
   },
   data() {
     return {
       loading: false,
       showAddOrEditDialog: false,
-      isCatalog: true,
       showMenuTypeSelector: true,
+      iconList: [],
       //data
       menuList: [],
       //request form
@@ -154,11 +211,66 @@ export default {
         parentId: null,
         isHidden: 0
       },
+      //新增menu是否为目录
+      isCatalog: true,
       //菜单名
       keywords: "",
     }
   },
   methods: {
+    //新增或修改
+    doSaveOrUpdateMenu() {
+      if (this.menuForm.name.trim() == "") {
+        this.$message.error("菜单名不能为空");
+        return false;
+      }
+      if (this.menuForm.path.trim() == "") {
+        this.$message.error("访问地址不能为空");
+        return false;
+      }
+      if (this.menuForm.component.trim() == "") {
+        this.$message.error("组建路径不能为空");
+        return false;
+      }
+      if (this.menuForm.icon.trim() == "") {
+        this.$message.error("图标不能为空");
+        return false;
+      }
+
+      this.postRequest("/admin/menus",this.menuForm).then(res => {
+        if (res.data.flag) {
+          this.$notify.success({
+            title: "成功",
+            message: "操作成功"
+          });
+          this.listMenus();
+        } else {
+          this.$notify.error({
+            title: "失败",
+            message: "操作失败"
+          });
+        }
+
+        this.showAddOrEditDialog = false;
+      })
+    },
+    //选择图标
+    chooseIcon(icon) {
+      this.menuForm.icon = icon;
+    },
+    //查询菜单图标
+    listMenuIcons() {
+      this.getRequest("/admin/menus/icons").then(res => {
+        if (res.data.flag) {
+          this.iconList = res.data.data;
+        } else {
+          this.$notify.error({
+            title: '获取图标资源失败',
+            message: res.data.message
+          })
+        }
+      })
+    },
     //查询后台菜单
     listMenus() {
       let params = {
@@ -202,11 +314,10 @@ export default {
               component: "",
               path: "",
               orderNum: 1,
-              parentId: null,
+              parentId: menu.id,
               isHidden: 0
             }
             this.$refs.menuTitle.innerHTML = "新增菜单";
-            this.menuForm.parentId = menu.id;
             break;
           case 2:
             //修改
@@ -217,6 +328,7 @@ export default {
         }
       } else {
         //无则对应添加 目录
+        this.showMenuTypeSelector = true;
         this.$refs.menuTitle.innerHTML = "新增菜单";
         //初始化表单数据
         this.menuForm = {
@@ -230,17 +342,17 @@ export default {
           parentId: null,
           isHidden: 0
         }
-
-        this.showAddOrEditDialog = true;
       }
+      this.showAddOrEditDialog = true;
     },
     deleteMenu(id) {
-      this.deleteMenu("/admin/menus/" + id).then(res => {
+      this.deleteRequest("/admin/menus/" + id).then(res => {
         if (res.data.flag) {
           this.$notify.success({
             title: "成功",
             message: "删除成功"
           });
+
           this.listMenus();
         } else {
           this.$notify.error({
@@ -266,5 +378,18 @@ export default {
 </script>
 
 <style scoped>
+.icon-item {
+  cursor: pointer;
+  padding: .5rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
+  transition: .5s .1s ease-in-out;
+}
+.icon-item:hover{
+  background-color: #535453;
+  color: white;
+  border-radius: 13px;
+}
 </style>
