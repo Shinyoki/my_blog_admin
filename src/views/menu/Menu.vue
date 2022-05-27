@@ -60,7 +60,7 @@
             :inactive-value="0"
             active-color="#13ce66"
             inactive-color="#F4F4F5"
-            disabled
+            @change="onIsHiddenChange(scope.row)"
             />
         </template>
       </el-table-column>
@@ -218,6 +218,23 @@ export default {
     }
   },
   methods: {
+    onIsHiddenChange(menu) {
+      this.postRequest("/admin/menus",menu).then(res => {
+        if (res.data.flag) {
+          this.$notify.success({
+            title: "成功",
+            message: "操作成功"
+          });
+
+          this.listMenus();
+        } else {
+          this.$notify.error({
+            title: "失败",
+            message: "操作失败"
+          });
+        }
+      })
+    },
     //新增或修改
     doSaveOrUpdateMenu() {
       if (this.menuForm.name.trim() == "") {
@@ -361,7 +378,8 @@ export default {
           });
         }
       })
-    }
+    },
+
   },
   computed: {
     //格式化LocalDateTime
