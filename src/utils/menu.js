@@ -8,7 +8,7 @@ import vuex from "@/store/index"
 import router from "@/router/index"
 
 export function initMenus() {
-    getRequest("/menus/user/list").then(res=>{
+    getRequest("/admin/user/menus").then(res=>{
         if (res.data.flag) {
             let userMenus = res.data.data;
             //第一层元素都是目录，children都是菜单
