@@ -197,8 +197,6 @@ export default {
       };
 
       this.getRequest("/admin/resources", params).then(res => {
-        console.log("得到的resource")
-        console.log(res.data.data)
         this.resourceList = res.data.data;
 
         this.loading = false;

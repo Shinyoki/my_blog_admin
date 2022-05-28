@@ -427,11 +427,9 @@ export default {
         isDelete: this.isDelete
       }
       this.axios.get("/api/admin/articles",{ params }).then(res => {
-        console.log(res)
         this.articleList = res.data.data.recordList;
         this.count = res.data.data.count;
         this.loading = false;
-        console.log(this.count)
       })
     },
     //查询对应文章

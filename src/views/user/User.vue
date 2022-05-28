@@ -215,7 +215,6 @@ export default {
 
       this.getRequest("/admin/users", params).then(res => {
         this.userList = res.data.data.recordList;
-        console.log(this.userList)
         this.count = res.data.data.count;
         this.loading = false;
       })
