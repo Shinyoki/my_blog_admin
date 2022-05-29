@@ -1,7 +1,7 @@
 <template>
   <el-card class="main-card">
     <div class="card-container-title">{{ this.$route.name }}</div>
-
+    👶
   </el-card>
 </template>
 
@@ -14,7 +14,14 @@
     },
     data() {
       return {
-
+        //request
+        talkForm: {
+          id: null,
+          content: "",
+          isTop: 0,
+          status: 1,
+          images: null
+        }
       }
     },
     methods: {
