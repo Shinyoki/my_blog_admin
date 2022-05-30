@@ -127,6 +127,11 @@ export default {
     },
     removeTab(routeElement) {
       this.$store.commit("removeTab", routeElement);
+      //如果是当前页就跳转回上一页
+      if (routeElement.path == this.$route.path) {
+        let tabList = this.$store.state.tabList;
+        this.$router.push({path: tabList[tabList.length - 1].path})
+      }
     },
     closeAllTab() {
       this.$store.commit("resetTabList");

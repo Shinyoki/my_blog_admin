@@ -259,6 +259,10 @@ export default {
     //新增或修改 role-menu dialog
     openRoleMenuModel(role) {
       /**
+       * https://blog.csdn.net/qq_39141511/article/details/108799371
+       *
+       * ref需要在dom渲染完成之后才会有，在使用的时候确保dom已经渲染完成，比如在生命周期mounted（）{}中调用，或者在this.$nextTick(()=>{})中调用
+       *
        * 直接修改CheckedKeys时会提示'setCheckedKeys'未定义，因为此时DOM元素并未加载完毕，
        * 因此需要使用Vue提供的API $nextTick来等待DOM更新循环结束后延迟回调
        */
