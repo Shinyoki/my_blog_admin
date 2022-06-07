@@ -51,6 +51,13 @@
       <el-table-column label="排序" prop="orderNum" align="center" width="100"/>
 <!--      列：访问路径-->
       <el-table-column label="访问路径" prop="path"/>
+<!--      列：组件路径-->
+      <el-table-column label="组件路径" prop="component">
+        <template slot-scope="scope">
+          <span v-if="scope.row.component.startsWith('/')">{{ scope.row.component }}.vue</span>
+          <span v-else>{{ scope.row.component }}</span>
+        </template>
+      </el-table-column>
 <!--      列：是否隐藏-->
       <el-table-column label="隐藏" prop="isHidden" align="center" width="80">
         <template slot-scope="scope">
