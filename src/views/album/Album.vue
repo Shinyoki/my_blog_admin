@@ -49,7 +49,7 @@
           :key="index"
           :md="6"
       >
-        <div class="album-item" @click="checkAlbumInfoById(album)">
+        <div class="album-item" @click="checkAlbumInfoById(album.id)">
           <!--         相册 操作-->
           <div class="album-operation">
             <el-dropdown @command="handleCommand">
@@ -172,10 +172,9 @@
     <!--    delete-->
     <el-dialog :visible.sync="showDeleteAlbumDialog">
       <div class="dialog-title-container" slot="title">
-        <i class="el-icon-warning" style="color: #f56c6c;"></i>提示
+        <i class="el-icon-warning" style="color: #f56c6c;"/>提示
       </div>
-
-      <div class="dialog-message-container" slot="message">
+      <div>
         <p>确认删除该相册？</p>
       </div>
       <div slot="footer" class="dialog-footer-container">
@@ -256,9 +255,7 @@ export default {
     },
     //push到删除页面
     push2DeleteAlbumView() {
-      this.$router.push({
-        path: '/albums/delete'
-      })
+      this.$router.push({ path: "/photos/delete" })
     },
     //查询相册
     searchAlbums() {

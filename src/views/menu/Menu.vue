@@ -232,8 +232,8 @@ export default {
             title: "成功",
             message: "操作成功"
           });
-
-          this.listMenus();
+          this.reloadLocation();
+          // this.listMenus();
         } else {
           this.$notify.error({
             title: "失败",
@@ -386,7 +386,11 @@ export default {
         }
       })
     },
-
+    //通过重新加载页面刷新SideBar的key，来重新渲染SideBar
+    reloadLocation(val) {
+      this.$message.success("更新了" + val)
+      location.reload();
+    },
   },
   computed: {
     //格式化LocalDateTime
@@ -397,8 +401,8 @@ export default {
     },
   },
   watch: {
+  },
 
-  }
 }
 </script>
 
