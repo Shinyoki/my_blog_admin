@@ -5,11 +5,9 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-module.exports = defineConfig({
+module.exports = {
   transpileDependencies: true,
   devServer: {
-    host: "127.0.0.1",
-    port: 8080,
     proxy: {
       "/api": {
         target: "http://localhost:8888",
@@ -29,4 +27,4 @@ module.exports = defineConfig({
       }
     }
   }
-})
+}
