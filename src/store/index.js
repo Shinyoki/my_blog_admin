@@ -34,6 +34,8 @@ export default new Vuex.Store({
          * @param userInfo
          */
         login(state, userInfo) {
+            console.log("用户信息")
+            console.log(userInfo)
             state.userId = userInfo.userInfoId
             state.roles = userInfo.roles
             state.avatar = userInfo.avatar
@@ -104,6 +106,24 @@ export default new Vuex.Store({
                     path: curRoute.path
                 })
             }
+        },
+        /**
+         * 更新用户头像
+         * @param state
+         * @param avatar    用户头像url
+         */
+        updateAvatar(state, avatar) {
+            this.state.avatar = avatar;
+        },
+        /**
+         * 更新用户信息
+         * @param state
+         * @param info    用户信息
+         */
+        updateInfo(state, info) {
+            this.state.nickname = info.nickname;
+            this.state.intro = info.intro;
+            this.state.webSite = info.webSite;
         }
 
     },
