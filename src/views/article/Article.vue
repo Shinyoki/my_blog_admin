@@ -470,20 +470,20 @@ export default {
       if ((file.size / 1024) < this.config.UPLOAD_SIZE) {
         //添加元素
         formData.append('file', file);
-        this.postRequest("admin/articles/images", formData).then(res => {
+        this.postRequest("/admin/articles/images", formData).then(res => {
           this.$refs.mdEditor.$img2Url(fileIndex, res.data.data);
         });
       } else {
         //压缩并将压缩后的元素添加
         imageConversion.compressAccurately(file, this.config.UPLOAD_SIZE)
             .then(compressedFile => {
-              formData.append('file',
-                  new window.File([compressedFile], file.name, {type: file.type})
-              )
-            });
-        this.postRequest("/admin/articles/images", formData).then(res => {
-          this.$refs.mdEditor.$img2Url(fileIndex, res.data.data)
-        })
+              console.log("压缩完的对象")
+              let files = new File([compressedFile], file.name, {type: file.type})
+              formData.append("file", files);
+              this.postRequest("/admin/articles/images", formData).then(res => {
+                this.$refs.mdEditor.$img2Url(fileIndex, res.data.data)
+              })
+            })
       }
 
     },
