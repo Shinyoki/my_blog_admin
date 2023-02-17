@@ -38,6 +38,10 @@ import NavigatorBar from "@/layout/components/NavigatorBar";
 export default {
   name: "IndexView",
   components: {NavigatorBar, MySidebar },
+  created() {
+    console.log(this.$router.getRoutes())
+  },
+
   computed: {
     isHidden: function () {
       //将this.$store.state.collapse ?简单的放在data() method中无法实时动态地监听到this.$store.state.collapse的变化
